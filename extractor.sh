@@ -675,6 +675,14 @@ for partition in $PARTITIONS; do
     fi
 done
 
+# Copy unknown firmware images alongside known images
+find "$tmpdir" -maxdepth 1 -type f -name "*.img" -print0 | while IFS= read -r -d '' img; do
+    base=$(basename "$img" .img)
+    if ! [[ " $PARTITIONS " =~ " $base " ]]; then
+        cp -a "$img" "$outdir/"
+    fi
+done
+
 # Specifically check if input is 'radio.img'
 if 7z l -ba "${romzip}" 2>/dev/null | grep -q radio.img; then
     ## Extract 'radio.img' from archive'
